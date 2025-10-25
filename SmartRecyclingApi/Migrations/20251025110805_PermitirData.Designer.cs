@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartRecyclingApi.Data;
 
@@ -11,9 +12,11 @@ using SmartRecyclingApi.Data;
 namespace SmartRecyclingApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251025110805_PermitirData")]
+    partial class PermitirData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,19 +33,22 @@ namespace SmartRecyclingApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<bool?>("adesao")
+                    b.Property<bool>("adesao")
                         .HasColumnType("bit");
 
                     b.Property<string>("codigo_postal")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("data_nascimento")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("morada")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("nome")
@@ -50,15 +56,16 @@ namespace SmartRecyclingApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("pontos")
+                    b.Property<int>("pontos")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("status")
+                    b.Property<bool>("status")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("telefone")
+                    b.Property<int>("telefone")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
