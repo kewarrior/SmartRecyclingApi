@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
 using SmartRecyclingApi.Models;
+using SmartRecyclingApi.ViewModels.Utilizador;
 
 namespace SmartRecyclingApi.Services.Utilizador
 {
@@ -59,6 +60,44 @@ namespace SmartRecyclingApi.Services.Utilizador
                 return resposta;
             }
 
+        }
+
+        public async Task<ResponseModel<UtilizadorModel>> CriarUtilizador(UtilizadorCriacaoDTO utilizadorCriacaoDto)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+            try
+            {
+                
+                var normalizaEmail = utilizadorCriacaoDto.email?.ToLower();
+                var existeEmail = await _context.Utilizadores.FirstOrDefaultAsync(emailutilizador => emailutilizador.email == normalizaEmail);
+                if (existeEmail != null)
+                {
+                    resposta.Mensagem = "O endereço de e-mail já está associado a outro utilizador ";
+                    return resposta;
+                }
+
+                var criptarPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(utilizadorCriacaoDto.password, 13);
+
+                var utilizador = new UtilizadorModel()
+                {
+                    nome = utilizadorCriacaoDto.nome,
+                    email = normalizaEmail,
+                    password = criptarPassword
+                };
+
+                _context.Add(utilizador);
+                await _context.SaveChangesAsync();
+
+                resposta.Dados = utilizador;
+                resposta.Mensagem = "Utilizador Criado com Sucesso";
+                return resposta;
+
+            }catch (Exception ex)
+            {
+                resposta.Mensagem = ex.Message;
+                resposta.Status = false;
+                return resposta;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SmartRecyclingApi.Models;
+using SmartRecyclingApi.ViewModels.Utilizador;
 
 namespace SmartRecyclingApi.Services.Utilizador
 {
@@ -6,6 +7,7 @@ namespace SmartRecyclingApi.Services.Utilizador
     {
         Task<ResponseModel<List<UtilizadorModel>>> GetUtilizadores();
         Task<ResponseModel<UtilizadorModel>> GetUtilizarbyId(int idUtilizador);
+        Task<ResponseModel<UtilizadorModel>> CriarUtilizador(UtilizadorCriacaoDTO utilizadorCriacaoDto);
 
 
     }
