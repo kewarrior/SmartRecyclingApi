@@ -89,8 +89,6 @@ namespace SmartRecyclingApi.Services.Utilizador
                     return resposta;
                 }
 
-
-
                 var criptarPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(utilizadorCriacaoDto.password, 13);
 
                 var utilizador = new UtilizadorModel()
@@ -108,6 +106,56 @@ namespace SmartRecyclingApi.Services.Utilizador
                 return resposta;
 
             }catch (Exception ex)
+            {
+                resposta.Mensagem = ex.Message;
+                resposta.Status = false;
+                return resposta;
+            }
+        }
+
+        public async Task<ResponseModel<UtilizadorModel>> EditarUtilizador(EditarUtilizadorDto editarUtilizadorDto)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+            try
+            {
+                var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(utilizadorBanco => utilizadorBanco.Id == editarUtilizadorDto.Id);
+
+                if(utilizador == null)
+                {
+                    resposta.Mensagem = "Utilizador não encontrado";
+                    return resposta;
+                }
+                var emailRegex = @"^[^@\s]+@[^@\s]+\.(pt|com)$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(editarUtilizadorDto.email ?? string.Empty, emailRegex))
+                {
+                    resposta.Mensagem = "O e-mail informado não é válido. Deve terminar com .pt ou .com";
+                    return resposta;
+                }
+
+                var normalizaEmail = editarUtilizadorDto.email?.ToLower();
+                var existeEmail = await _context.Utilizadores.FirstOrDefaultAsync(emailutilizador => emailutilizador.email == normalizaEmail);
+                if (existeEmail != null)
+                {
+                    resposta.Mensagem = "O endereço de e-mail já está associado a outro utilizador ";
+                    return resposta;
+                }
+
+                var criptarPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(editarUtilizadorDto.password, 13);
+
+                utilizador.nome = editarUtilizadorDto.nome;
+                utilizador.email = normalizaEmail;
+                utilizador.password = criptarPassword;
+                utilizador.morada = editarUtilizadorDto.morada;
+                utilizador.codigo_postal = editarUtilizadorDto.codigo_postal;
+                utilizador.telefone = editarUtilizadorDto.telefone;
+
+                _context.Update(utilizador);
+                await _context.SaveChangesAsync();
+
+                resposta.Mensagem = "Utilizador editado com Sucesso";
+                return resposta;
+            }
+            catch (Exception ex) 
             {
                 resposta.Mensagem = ex.Message;
                 resposta.Status = false;
