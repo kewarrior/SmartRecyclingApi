@@ -31,12 +31,19 @@ namespace SmartRecyclingApi.Controllers
             var utilizador = await _utilizadorInterface.GetUtilizarbyId(idUtilizador);
             return Ok(utilizador);
         }
-        [HttpPost("CriarUtilizador")]
 
+        [HttpPost("CriarUtilizador")]
         public async Task<ActionResult<ResponseModel<UtilizadorModel>>> CriarUtilizador(UtilizadorCriacaoDTO utilizadorCriacaoDto)
         {
             var criarUtilizador = await _utilizadorInterface.CriarUtilizador(utilizadorCriacaoDto);
             return Ok(criarUtilizador);
+        }
+
+        [HttpPut("EditarUtilizador")]
+        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> EditarUtilizador(EditarUtilizadorDto editarUtilizadorDto)
+        {
+            var editarUtilizador = await _utilizadorInterface.EditarUtilizador(editarUtilizadorDto);
+            return Ok (editarUtilizador);
         }
     }
 }
