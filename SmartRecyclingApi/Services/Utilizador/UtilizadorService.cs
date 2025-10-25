@@ -12,19 +12,14 @@ namespace SmartRecyclingApi.Services.Utilizador
             _context = context;
         }
 
-        public Task<ResponseModel<UtilizadorModel>> GetUtilizarbyId(int idUtilizador)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<ResponseModel<List<UtilizadorModel>>> GetUtilizadores()
         {
             ResponseModel<List<UtilizadorModel>> resposta = new ResponseModel<List<UtilizadorModel>>();
             try
             {
-                var autores = await _context.Utilizadores.ToListAsync();
+                var utilizadores = await _context.Utilizadores.ToListAsync();
 
-                resposta.Dados = autores;
+                resposta.Dados = utilizadores;
                 resposta.Mensagem = "Todos os utilizadores foram carregados!";
                 return resposta;
 
@@ -38,6 +33,32 @@ namespace SmartRecyclingApi.Services.Utilizador
 
         }
 
+        public async Task<ResponseModel<UtilizadorModel>> GetUtilizarbyId(int idUtilizador)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
 
+            try
+            {
+                var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(utilizadorBanco => utilizadorBanco.Id == idUtilizador);
+
+                if (utilizador == null)
+                {
+                    resposta.Mensagem = "Não existe nenhum utilizador com esse ID";
+                    return resposta;
+                }
+
+                resposta.Dados = utilizador;
+                resposta.Mensagem = "Foi encontrado o utilizador";
+                return resposta;
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Mensagem = ex.Message;
+                resposta.Status = false;
+                return resposta;
+            }
+
+        }
     }
 }

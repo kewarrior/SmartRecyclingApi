@@ -17,12 +17,18 @@ namespace SmartRecyclingApi.Controllers
         }
 
 
-        [HttpGet("GettUtilizador")]
-
+        [HttpGet("GetUtilizador")]
         public async Task<ActionResult<ResponseModel<List<UtilizadorModel>>>> GetUtilizadores()
         {
             var utilizadores = await _utilizadorInterface.GetUtilizadores();
             return Ok(utilizadores);
+        }
+
+        [HttpGet("GetUtilizadorbyID/{idUtilizador}")]
+        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> GetUtilizarbyId(int idUtilizador)
+        {
+            var utilizador = await _utilizadorInterface.GetUtilizarbyId(idUtilizador);
+            return Ok(utilizador);
         }
     }
 }
