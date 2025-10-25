@@ -67,7 +67,20 @@ namespace SmartRecyclingApi.Services.Utilizador
             ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
             try
             {
-                
+                if (new[] { utilizadorCriacaoDto.nome, utilizadorCriacaoDto.email, utilizadorCriacaoDto.password }
+                    .Any(string.IsNullOrEmpty))
+                {
+                    resposta.Mensagem = "Nome, e-mail e palavra-passe são obrigatórios.";
+                    return resposta;
+                }
+
+                var emailRegex = @"^[^@\s]+@[^@\s]+\.(pt|com)$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(utilizadorCriacaoDto.email ?? string.Empty, emailRegex))
+                {
+                    resposta.Mensagem = "O e-mail informado não é válido. Deve terminar com .pt ou .com";
+                    return resposta;
+                }
+
                 var normalizaEmail = utilizadorCriacaoDto.email?.ToLower();
                 var existeEmail = await _context.Utilizadores.FirstOrDefaultAsync(emailutilizador => emailutilizador.email == normalizaEmail);
                 if (existeEmail != null)
@@ -75,6 +88,8 @@ namespace SmartRecyclingApi.Services.Utilizador
                     resposta.Mensagem = "O endereço de e-mail já está associado a outro utilizador ";
                     return resposta;
                 }
+
+
 
                 var criptarPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(utilizadorCriacaoDto.password, 13);
 
