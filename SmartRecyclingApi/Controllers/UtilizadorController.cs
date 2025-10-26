@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.Services.Utilizador;

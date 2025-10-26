@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
+using SmartRecyclingApi.Services.Pedido;
 using SmartRecyclingApi.Services.Utilizador;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddScoped<IUtilizadorInterface, UtilizadorService>();
+builder.Services.AddScoped<IPedidoInterface, PedidoService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
