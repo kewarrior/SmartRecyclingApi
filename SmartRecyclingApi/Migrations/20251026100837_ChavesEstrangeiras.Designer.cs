@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartRecyclingApi.Data;
 
@@ -11,9 +12,11 @@ using SmartRecyclingApi.Data;
 namespace SmartRecyclingApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251026100837_ChavesEstrangeiras")]
+    partial class ChavesEstrangeiras
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,9 +37,11 @@ namespace SmartRecyclingApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status_Pedido")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Tipo_Pedido")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("ref_Utilizador")
@@ -57,16 +62,16 @@ namespace SmartRecyclingApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double?>("MatPapel")
+                    b.Property<double>("MatPapel")
                         .HasColumnType("float");
 
-                    b.Property<double?>("MatPlastico")
+                    b.Property<double>("MatPlastico")
                         .HasColumnType("float");
 
-                    b.Property<double?>("MatVidro")
+                    b.Property<double>("MatVidro")
                         .HasColumnType("float");
 
-                    b.Property<DateTime?>("data_Reciclagem")
+                    b.Property<DateTime>("data_Reciclagem")
                         .HasColumnType("datetime2");
 
                     b.Property<long>("ref_Utilizador")

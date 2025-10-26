@@ -13,6 +13,10 @@
         public bool? status { get; set; }
         public bool? adesao { get; set; }
         public DateTime? data_nascimento { get; set; }
-        
+
+
+        public virtual ICollection<ReciclagemModel>? Reciclagem { get; set; }
+        public virtual ICollection<PedidoModel>? Pedido { get; set; }
+
     }
 }

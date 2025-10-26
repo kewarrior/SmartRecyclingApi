@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartRecyclingApi.Data;
 
@@ -11,9 +12,11 @@ using SmartRecyclingApi.Data;
 namespace SmartRecyclingApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251026100109_CriacaoNovaTabelas")]
+    partial class CriacaoNovaTabelas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,17 +37,17 @@ namespace SmartRecyclingApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status_Pedido")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Tipo_Pedido")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("ref_Utilizador")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ref_Utilizador")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ref_Utilizador");
 
                     b.ToTable("Pedido");
                 });
@@ -57,24 +60,22 @@ namespace SmartRecyclingApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double?>("MatPapel")
+                    b.Property<double>("MatPapel")
                         .HasColumnType("float");
 
-                    b.Property<double?>("MatPlastico")
+                    b.Property<double>("MatPlastico")
                         .HasColumnType("float");
 
-                    b.Property<double?>("MatVidro")
+                    b.Property<double>("MatVidro")
                         .HasColumnType("float");
 
-                    b.Property<DateTime?>("data_Reciclagem")
+                    b.Property<DateTime>("data_Reciclagem")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("ref_Utilizador")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ref_Utilizador")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ref_Utilizador");
 
                     b.ToTable("Reciclagem");
                 });
@@ -121,35 +122,6 @@ namespace SmartRecyclingApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Utilizadores");
-                });
-
-            modelBuilder.Entity("SmartRecyclingApi.Models.PedidoModel", b =>
-                {
-                    b.HasOne("SmartRecyclingApi.Models.UtilizadorModel", "Utilizador")
-                        .WithMany("Pedido")
-                        .HasForeignKey("ref_Utilizador")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Utilizador");
-                });
-
-            modelBuilder.Entity("SmartRecyclingApi.Models.ReciclagemModel", b =>
-                {
-                    b.HasOne("SmartRecyclingApi.Models.UtilizadorModel", "Utilizador")
-                        .WithMany("Reciclagem")
-                        .HasForeignKey("ref_Utilizador")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Utilizador");
-                });
-
-            modelBuilder.Entity("SmartRecyclingApi.Models.UtilizadorModel", b =>
-                {
-                    b.Navigation("Pedido");
-
-                    b.Navigation("Reciclagem");
                 });
 #pragma warning restore 612, 618
         }
