@@ -18,12 +18,27 @@ namespace SmartRecyclingApi.Services.Utilizador
             ResponseModel<List<UtilizadorModel>> resposta = new ResponseModel<List<UtilizadorModel>>();
             try
             {
-                var utilizadores = await _context.Utilizadores.ToListAsync();
+                var utilizadores = await _context.Utilizadores
+                    .Select(u => new UtilizadorModel
+                    {
+                        Id = u.Id,
+                        nome = u.nome,
+                        email = u.email,
+                        morada = u.morada,
+                        codigo_postal = u.codigo_postal,
+                        telefone = u.telefone,
+                        pontos = u.pontos,
+                        status = u.status,
+                        adesao = u.adesao,
+                        data_nascimento = u.data_nascimento,
+                        Reciclagem = u.Reciclagem,
+                        Pedido = u.Pedido
+                    })
+                    .ToListAsync();
 
                 resposta.Dados = utilizadores;
                 resposta.Mensagem = "Todos os utilizadores foram carregados!";
                 return resposta;
-
             }
             catch (Exception ex)
             {
@@ -105,7 +120,8 @@ namespace SmartRecyclingApi.Services.Utilizador
                 resposta.Mensagem = "Utilizador Criado com Sucesso";
                 return resposta;
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 resposta.Mensagem = ex.Message;
                 resposta.Status = false;
@@ -120,7 +136,7 @@ namespace SmartRecyclingApi.Services.Utilizador
             {
                 var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(utilizadorBanco => utilizadorBanco.Id == editarUtilizadorDto.Id);
 
-                if(utilizador == null)
+                if (utilizador == null)
                 {
                     resposta.Mensagem = "Utilizador não encontrado";
                     return resposta;
@@ -155,12 +171,65 @@ namespace SmartRecyclingApi.Services.Utilizador
                 resposta.Mensagem = "Utilizador editado com Sucesso";
                 return resposta;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 resposta.Mensagem = ex.Message;
                 resposta.Status = false;
                 return resposta;
             }
         }
+        public async Task<ResponseModel<UtilizadorModel>> Login(string email, string password)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+            try
+            {
+
+                if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)){
+                    resposta.Mensagem = "É necessário preencher os dados de Email e Palavra-Passe";
+                    resposta.Status = false;
+                    return resposta;
+                }
+
+                var emailNormalizado = email.ToLower();
+                var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(utilizadorlogin => utilizadorlogin.email == emailNormalizado);
+
+                if (utilizador == null)
+                {
+                    resposta.Mensagem = "Dados Incorretos";
+                    return resposta;
+                }
+
+                var passwordValida = BCrypt.Net.BCrypt.EnhancedVerify(password, utilizador.password);
+
+                if (passwordValida == false)
+                {
+                    resposta.Mensagem = "Dados Incorretos";
+                    return resposta;
+                }
+
+                resposta.Dados = new UtilizadorModel
+                {
+                    email = utilizador.email,
+                    nome = utilizador.nome,
+                    status = utilizador.status,
+                    morada = utilizador.morada,
+                    codigo_postal = utilizador.codigo_postal,
+                    telefone = utilizador.telefone,
+                    pontos = utilizador.pontos,
+                    adesao = utilizador.adesao,
+                    data_nascimento = utilizador.data_nascimento,
+                };
+                resposta.Mensagem = "Login com Sucesso";
+                return resposta;
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Mensagem = ex.Message;
+                resposta.Status = false;
+                return resposta;
+            }
+        }
+
     }
 }

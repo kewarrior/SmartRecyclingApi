@@ -45,5 +45,13 @@ namespace SmartRecyclingApi.Controllers
             var editarUtilizador = await _utilizadorInterface.EditarUtilizador(editarUtilizadorDto);
             return Ok (editarUtilizador);
         }
+
+        [HttpGet("Login")]
+
+        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> Login(string email, string password)
+        {
+            var login = await _utilizadorInterface.Login( email,password);
+            return Ok(login);
+        }
     }
 }
