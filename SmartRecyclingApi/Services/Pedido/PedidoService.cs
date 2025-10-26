@@ -1,4 +1,5 @@
-﻿using SmartRecyclingApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SmartRecyclingApi.Data;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.ViewModels.Pedido;
 
@@ -47,6 +48,39 @@ namespace SmartRecyclingApi.Services.Pedido
 
                 resposta.Mensagem = "Pedido inserido com sucesso.";
                 resposta.Status = true;
+            }
+            catch (Exception ex)
+            {
+                resposta.Mensagem = ex.Message;
+                resposta.Status = false;
+            }
+            return resposta;
+        }
+
+        public async Task<ResponseModel<PedidoModel>> GetPedidoByUtilizadorId(long ref_utilizador)
+        {
+            ResponseModel<PedidoModel> resposta = new ResponseModel<PedidoModel>();
+            if (ref_utilizador == 0)
+            {
+                resposta.Mensagem = "É necessário o id do utilizador";
+                return resposta;
+            }
+
+            try
+            {
+                var pedidos = await _context.Pedido.FirstOrDefaultAsync(u => u.ref_Utilizador == ref_utilizador);
+
+                if(pedidos == null)
+                {
+                    resposta.Mensagem = "Nenhum pedido para esse Utilizador.";
+                }
+
+
+
+                resposta.Dados = pedidos;
+                resposta.Mensagem = "Pedido Encontrado";
+                return resposta;
+
             }
             catch (Exception ex)
             {
