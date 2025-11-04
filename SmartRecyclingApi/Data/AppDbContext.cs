@@ -9,7 +9,6 @@ namespace SmartRecyclingApi.Data
         {
 
         }
-
         public DbSet<UtilizadorModel> Utilizadores { get; set; }
         public DbSet<ReciclagemModel> Reciclagem { get; set; }
         public DbSet<PedidoModel> Pedido { get; set; }

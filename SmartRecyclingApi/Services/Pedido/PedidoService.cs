@@ -106,8 +106,6 @@ namespace SmartRecyclingApi.Services.Pedido
                 resposta.Dados = pedidos;
                 resposta.Mensagem = "Pedidos Encontrados";
                 return resposta;
-
-
             }
             catch (Exception ex)
             {
