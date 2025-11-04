@@ -1,4 +1,5 @@
 ﻿using SmartRecyclingApi.Data;
+using SmartRecyclingApi.Models;
 
 namespace SmartRecyclingApi.Services.Operador
 {
@@ -11,7 +12,50 @@ namespace SmartRecyclingApi.Services.Operador
             _context = context;
         }
 
+        public async Task<ResponseModel<ReciclagemModel>> InserirDadosReciclagem(ReciclagemModel reciclagem)
+        {
+            ResponseModel<ReciclagemModel> resposta = new ResponseModel<ReciclagemModel>();
 
+            if (reciclagem.ref_Utilizador == 0)
+            {
+                resposta.Mensagem = "Id do utilizador é obrigatorio";
+                return resposta;
+            }
+
+            var utilizadorExistente = await _context.Utilizadores.FindAsync(reciclagem.ref_Utilizador);
+
+            if (utilizadorExistente == null)
+            {
+                resposta.Mensagem = "Utilizador não existente.";
+                return resposta;
+            }
+
+            try
+            {
+                var InserirDados = new ReciclagemModel()
+                {
+                    ref_Utilizador = reciclagem.ref_Utilizador,
+                    MatPapel = reciclagem.MatPapel,
+                    MatPlastico = reciclagem.MatPlastico,
+                    MatVidro = reciclagem.MatVidro,
+                    data_Reciclagem = DateTime.Now
+                };
+
+                _context.Add(InserirDados);
+                await _context.SaveChangesAsync();
+
+                resposta.Mensagem = "Dados Inseridos Com sucesso";
+                resposta.Status = true;
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Mensagem = ex.Message;
+                resposta.Status = false;
+            }
+            return resposta;
+
+        }
 
     }
 }

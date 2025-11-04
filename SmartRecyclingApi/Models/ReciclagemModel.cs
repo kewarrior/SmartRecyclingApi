@@ -13,6 +13,6 @@ namespace SmartRecyclingApi.Models
 
 
         [ForeignKey("ref_Utilizador")]
-        public virtual UtilizadorModel Utilizador { get; set; }
+        public virtual UtilizadorModel? Utilizador { get; set; }
     }
 }

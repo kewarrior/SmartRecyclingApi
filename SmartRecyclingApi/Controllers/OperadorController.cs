@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SmartRecyclingApi.Models;
 using SmartRecyclingApi.Services.Operador;
 using SmartRecyclingApi.Services.Pedido;
 
@@ -17,7 +18,12 @@ namespace SmartRecyclingApi.Controllers
             _operadorInterface = operadorInterface;
         }
 
-
+        [HttpPost("InserirDadosReciclagem")]
+        public async Task<ActionResult<ResponseModel<ReciclagemModel>>> InserirDadosReciclagem(ReciclagemModel reciclagem)
+        {
+            var inserir = await _operadorInterface.InserirDadosReciclagem(reciclagem);
+            return Ok(inserir);
+        }
 
     }
 }
