@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.ViewModels.Pedido;
+using System.Linq.Expressions;
 
 namespace SmartRecyclingApi.Services.Pedido
 {
@@ -70,7 +72,7 @@ namespace SmartRecyclingApi.Services.Pedido
             {
                 var pedidos = await _context.Pedido.FirstOrDefaultAsync(u => u.ref_Utilizador == ref_utilizador);
 
-                if(pedidos == null)
+                if (pedidos == null)
                 {
                     resposta.Mensagem = "Nenhum pedido para esse Utilizador.";
                 }
@@ -88,6 +90,32 @@ namespace SmartRecyclingApi.Services.Pedido
                 resposta.Status = false;
             }
             return resposta;
+        }
+        public async Task<ResponseModel<List<PedidoModel>>> GetPedidoPendentes()
+        {
+            ResponseModel<List<PedidoModel>> resposta = new ResponseModel<List<PedidoModel>>();
+            try
+            {
+                var pedidos = _context.Pedido.Where(u => u.Status_Pedido == "Pendente").ToList();
+
+                if (pedidos == null)
+                {
+                    resposta.Mensagem = "Sem pedidos para mostrar";
+                }
+
+                resposta.Dados = pedidos;
+                resposta.Mensagem = "Pedidos Encontrados";
+                return resposta;
+
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Mensagem = ex.Message;
+                resposta.Status = false;
+            }
+            return resposta;
+
         }
     }
 }

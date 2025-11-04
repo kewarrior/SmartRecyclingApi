@@ -7,5 +7,6 @@ namespace SmartRecyclingApi.Services.Pedido
     {
         Task<ResponseModel<PedidoModel>> InserirPedido(InserirPedidoDto pedidoDto);
         Task<ResponseModel<PedidoModel>> GetPedidoByUtilizadorId(long ref_utilizador);
+        Task<ResponseModel<List<PedidoModel>>> GetPedidoPendentes();
     }
 }

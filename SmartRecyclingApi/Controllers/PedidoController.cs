@@ -33,5 +33,13 @@ namespace SmartRecyclingApi.Controllers
             var pedido = await _pedidoInterface.GetPedidoByUtilizadorId(ref_utilizador);
             return Ok (pedido);
         }
+
+
+        [HttpGet("GetPedidoPendentes")]
+        public async Task<ActionResult<ResponseModel<List<PedidoModel>>>> GetPedidoPendentes()
+        {
+            var pedidosPenentes = await _pedidoInterface.GetPedidoPendentes();
+            return Ok (pedidosPenentes);
+        }
     }
 }
