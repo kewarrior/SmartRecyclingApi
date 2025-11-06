@@ -59,27 +59,32 @@ namespace SmartRecyclingApi.Services.Operador
 
         }
 
-        public async Task<ResponseModel<UtilizadorModel>> GetNomeOperador(long id)
+        public async Task<ResponseModel<string>> GetNomeOperador(long id)
         {
-            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+            ResponseModel<string> resposta = new ResponseModel<string>();
 
             try
             {
-                var utilizadorOperador = await _context.Utilizadores.FirstOrDefaultAsync(o => o.Id == id);
+                var utilizadorOperador = await _context.Utilizadores
+                    .AsNoTracking()
+                    .Where(o => o.Id == id)
+                    .Select(o => o.nome)
+                    .FirstOrDefaultAsync();
 
-                if(utilizadorOperador == null)
+                if (string.IsNullOrEmpty(utilizadorOperador))
                 {
                     resposta.Mensagem = "Nenhum utilizador com este ID";
+                    resposta.Status = false;
                     return resposta;
                 }
 
                 resposta.Dados = utilizadorOperador;
                 resposta.Status = true;
-                resposta.Mensagem = "Utilizador encontrado";
-
-            }catch(Exception ex)
+                resposta.Mensagem = "Nome do utilizador encontrado";
+            }
+            catch (Exception ex)
             {
-                resposta.Mensagem = $"Erro ao obter utilizador pelo ID {id}";
+                resposta.Mensagem = $"Erro ao obter nome do utilizador pelo ID {id}: {ex.Message}";
                 resposta.Status = false;
             }
             return resposta;
