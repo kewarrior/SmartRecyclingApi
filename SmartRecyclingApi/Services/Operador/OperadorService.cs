@@ -1,5 +1,7 @@
-﻿using SmartRecyclingApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SmartRecyclingApi.Data;
 using SmartRecyclingApi.Models;
+
 
 namespace SmartRecyclingApi.Services.Operador
 {
@@ -56,6 +58,33 @@ namespace SmartRecyclingApi.Services.Operador
             return resposta;
 
         }
+
+        public async Task<ResponseModel<UtilizadorModel>> GetNomeOperador(long id)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+
+            try
+            {
+                var utilizadorOperador = await _context.Utilizadores.FirstOrDefaultAsync(o => o.Id == id);
+
+                if(utilizadorOperador == null)
+                {
+                    resposta.Mensagem = "Nenhum utilizador com este ID";
+                    return resposta;
+                }
+
+                resposta.Dados = utilizadorOperador;
+                resposta.Status = true;
+                resposta.Mensagem = "Utilizador encontrado";
+
+            }catch(Exception ex)
+            {
+                resposta.Mensagem = $"Erro ao obter utilizador pelo ID {id}";
+                resposta.Status = false;
+            }
+            return resposta;
+        }
+
 
     }
 }

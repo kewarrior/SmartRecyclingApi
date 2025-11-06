@@ -25,5 +25,12 @@ namespace SmartRecyclingApi.Controllers
             return Ok(inserir);
         }
 
+
+        [HttpGet("GetNomeOperador")]
+        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> GetNomeOperador(long id)
+        {
+            var nomeOperador = await _operadorInterface.GetNomeOperador(id);
+            return Ok (nomeOperador); 
+        }
     }
 }
