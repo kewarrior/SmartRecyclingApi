@@ -40,7 +40,55 @@ namespace SmartRecyclingApi.Services.Contentores
                 resposta.Status = false;
                 return resposta;
             }
+        }
 
+        public async Task<ResponseModel<List<ReciclagemModel>>> GetDadosByUtilizadorId(long id)
+        {
+            ResponseModel<List<ReciclagemModel>> resposta = new ResponseModel<List<ReciclagemModel>>();
+
+            try
+            {
+                var dados = _context.Reciclagem.Where(u => u.ref_Utilizador == id);
+
+                if (dados == null)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Não foi possivel encontrados dados sobre esse utilizador";
+                    return resposta;
+                }
+
+                if (dados != null)
+                {
+                    var formatarDados = await dados.Select(dados => new ReciclagemModel
+                    {
+
+                        ref_Utilizador = dados.ref_Utilizador,
+                        MatPapel = dados.MatPapel,
+                        MatPlastico = dados.MatPlastico,
+                        MatVidro = dados.MatVidro
+
+                    }).ToListAsync();
+
+                    if (!formatarDados.Any())
+                    {
+                        resposta.Status = false;
+                        resposta.Mensagem = "Não foi possivel encontrados dados sobre esse utilizador";
+                        return resposta;
+                    }
+                    resposta.Status = true;
+                    resposta.Mensagem = "Dados carregados com sucesso";
+                    resposta.Dados = formatarDados;
+                }
+
+                return resposta;
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Mensagem = ex.Message;
+                resposta.Status = false;
+                return resposta;
+            }
         }
     }
 }

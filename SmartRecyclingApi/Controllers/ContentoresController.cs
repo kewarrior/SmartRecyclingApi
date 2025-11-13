@@ -22,5 +22,12 @@ namespace SmartRecyclingApi.Controllers
             var dados = await _contentoresInterface.GellAllDadosReciclagem();
             return Ok(dados);
         }
+
+        [HttpGet("GetDadosUtilizador")]
+        public async Task<ActionResult<ResponseModel<ReciclagemModel>>> GetDadosReciclagemUtilizador(long id)
+        {
+            var dados = await _contentoresInterface.GetDadosByUtilizadorId(id);
+            return Ok(dados);
+        }
     }
 }
