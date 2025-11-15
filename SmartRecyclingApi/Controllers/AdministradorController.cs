@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.Services.Administrador;
+using SmartRecyclingApi.ViewModels.Utilizador;
 
 namespace SmartRecyclingApi.Controllers
 {
@@ -25,5 +26,12 @@ namespace SmartRecyclingApi.Controllers
             return Ok(update);
         }
 
+
+        [HttpPost("ValidarAdministrador")]
+        public async Task<ActionResult<ResponseModel<object>>> ValidarAdministrador(UtilizadorCriacaoDTO verificarUtilizador)
+        {
+            var validacao = await _administradorInterface.ValidarPassword(verificarUtilizador);
+            return Ok(validacao);
+        }
     }
 }
