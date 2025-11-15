@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
+using SmartRecyclingApi.Services.Administrador;
 using SmartRecyclingApi.Services.Contentores;
 using SmartRecyclingApi.Services.Operador;
 using SmartRecyclingApi.Services.Pedido;
@@ -20,6 +21,7 @@ builder.Services.AddScoped<IUtilizadorInterface, UtilizadorService>();
 builder.Services.AddScoped<IPedidoInterface, PedidoService>();
 builder.Services.AddScoped<IOperadorInterface, OperadorService>();
 builder.Services.AddScoped<IContentoresInterface, ContentoresService>();
+builder.Services.AddScoped<IAdminInterface, AdministradorService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
