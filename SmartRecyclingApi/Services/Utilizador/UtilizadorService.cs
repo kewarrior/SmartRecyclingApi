@@ -110,7 +110,8 @@ namespace SmartRecyclingApi.Services.Utilizador
                 {
                     nome = utilizadorCriacaoDto.nome,
                     email = normalizaEmail,
-                    password = criptarPassword
+                    password = criptarPassword,
+                    Role="Utilizador"
                 };
 
                 _context.Add(utilizador);
