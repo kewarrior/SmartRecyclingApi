@@ -13,8 +13,7 @@
         public bool? status { get; set; }
         public bool? adesao { get; set; }
         public DateTime? data_nascimento { get; set; }
-
-        public string Role { get; set; }
+        public string? Role { get; set; }
 
 
         public virtual ICollection<ReciclagemModel>? Reciclagem { get; set; }
