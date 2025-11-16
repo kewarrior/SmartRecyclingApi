@@ -7,5 +7,6 @@ namespace SmartRecyclingApi.Services.Administrador
     {
         Task<ResponseModel<object>> UpdatePedido(long id);
         Task<ResponseModel<object>> ValidarPassword(UtilizadorCriacaoDTO verificarUtilizador);
+        Task<ResponseModel<List<UtilizadorModel>>> Listar();
     }
 }

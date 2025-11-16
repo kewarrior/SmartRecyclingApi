@@ -33,5 +33,12 @@ namespace SmartRecyclingApi.Controllers
             var validacao = await _administradorInterface.ValidarPassword(verificarUtilizador);
             return Ok(validacao);
         }
+
+        [HttpGet("Listar")]
+        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> Listar()
+        {
+            var dados = await _administradorInterface.Listar();
+            return Ok(dados);
+        }
     }
 }

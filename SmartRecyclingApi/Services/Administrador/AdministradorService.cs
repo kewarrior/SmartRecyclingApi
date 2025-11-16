@@ -58,7 +58,7 @@ namespace SmartRecyclingApi.Services.Administrador
 
                 var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.Id == verificarUtilizador.Id);
 
-                if(utilizador == null)
+                if (utilizador == null)
                 {
                     resposta.Status = false;
                     resposta.Mensagem = "Utilizador não encontrado";
@@ -94,5 +94,43 @@ namespace SmartRecyclingApi.Services.Administrador
             return resposta;
         }
 
+
+        public async Task<ResponseModel<List<UtilizadorModel>>> Listar()
+        {
+            ResponseModel<List<UtilizadorModel>> resposta = new ResponseModel<List<UtilizadorModel>>();
+
+            try
+            {
+
+                var utilizadores = await _context.Utilizadores.Select(
+                    u => new UtilizadorModel
+                    {
+                        Id = u.Id,
+                        nome = u.nome,
+                        email = u.email,
+                        Role = u.Role
+                    }).ToListAsync();
+
+                if(utilizadores.Count <= 0)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Nenhum utilizador encontrado";
+                        return resposta;
+                }
+
+                resposta.Status = true;
+                resposta.Mensagem = $"Foram encontrados {utilizadores.Count} utilizadores";
+                resposta.Dados = utilizadores;
+
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Status = false;
+                resposta.Mensagem = $"Erro ao procurar utilizadores {ex.Message}";
+                return resposta;
+            }
+            return resposta;
+        }
     }
 }
