@@ -189,7 +189,7 @@ namespace SmartRecyclingApi.Services.Administrador
 
                 var autor = await _context.Utilizadores.FirstOrDefaultAsync(utbanco => utbanco.Id == id);
 
-                if(autor == null)
+                if (autor == null)
                 {
                     resposta.Status = false;
                     resposta.Mensagem = "Não foi encontrado nenhum utilizador.";
@@ -204,11 +204,74 @@ namespace SmartRecyclingApi.Services.Administrador
                 return resposta;
 
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 resposta.Status = false;
                 resposta.Mensagem = $"Erro ao apagar Utilizador {ex.Message}";
                 return resposta;
+            }
+        }
+
+        public async Task<ResponseModel<UtilizadorModel>> CriarADmin(UtilizadorCriacaoDTO adminUtilizador)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+
+            try
+            {
+
+                if(adminUtilizador.email == null || adminUtilizador.nome == null || adminUtilizador.password == null)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Dados obrigatorios nao preenchidos";
+                    return resposta;
+                }
+
+                var emailRegex = @"^[^@\s]+@[^@\s]+\.(pt|com)$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(adminUtilizador.email ?? string.Empty, emailRegex))
+                {
+                    resposta.Mensagem = "O e-mail informado não é válido. Deve terminar com .pt ou .com";
+                    return resposta;
+                }
+
+                var normalizarEmail = adminUtilizador.email.ToLower();
+
+                var existeEmail = await _context.Utilizadores.Where(emailbanco => emailbanco.email == normalizarEmail).FirstOrDefaultAsync();
+
+                if(existeEmail != null)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Email ja existente";
+                    return resposta;
+                }
+
+                var criptarPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(adminUtilizador.password, 13);
+
+                var admin = new UtilizadorModel()
+                {
+                    email = normalizarEmail,
+                    password = criptarPassword,
+                    Role = "Administrador"
+
+                };
+
+                _context.Add(admin);
+                await _context.SaveChangesAsync();
+
+
+                resposta.Dados = admin;
+                resposta.Status = true;
+                resposta.Mensagem = "Administrador Criado";
+                return resposta;
+
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Status = false;
+                resposta.Mensagem = $"Erro ao criar Administrador: {ex.Message}";
+                return resposta;
+
             }
         }
     }

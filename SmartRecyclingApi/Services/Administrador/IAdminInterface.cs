@@ -10,5 +10,7 @@ namespace SmartRecyclingApi.Services.Administrador
         Task<ResponseModel<List<UtilizadorModel>>> Listar();
         Task<ResponseModel<UtilizadorModel>> EditarUtilizador(UtilizadorCriacaoDTO utilizador);
         Task<ResponseModel<UtilizadorModel>> ApagarUtilizador(long id);
+        Task<ResponseModel<UtilizadorModel>> CriarADmin(UtilizadorCriacaoDTO adminUtilizador);
+
     }
 }
