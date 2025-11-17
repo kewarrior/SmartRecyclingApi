@@ -111,11 +111,11 @@ namespace SmartRecyclingApi.Services.Administrador
                         Role = u.Role
                     }).ToListAsync();
 
-                if(utilizadores.Count <= 0)
+                if (utilizadores.Count <= 0)
                 {
                     resposta.Status = false;
                     resposta.Mensagem = "Nenhum utilizador encontrado";
-                        return resposta;
+                    return resposta;
                 }
 
                 resposta.Status = true;
@@ -131,6 +131,53 @@ namespace SmartRecyclingApi.Services.Administrador
                 return resposta;
             }
             return resposta;
+        }
+
+        public async Task<ResponseModel<UtilizadorModel>> EditarUtilizador(UtilizadorCriacaoDTO utilizador)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+
+            try
+            {
+                if (utilizador.Id == 0 || utilizador.nome == null || utilizador.email == null)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Dados inválidos: Id, nome, email sao obrigatórios";
+                    return resposta;
+                }
+
+
+                var dadosutilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.Id == utilizador.Id);
+
+                var emailExistente = await _context.Utilizadores.Where(u => u.email == utilizador.email).FirstOrDefaultAsync();
+
+                if (emailExistente != null && emailExistente.Id != utilizador.Id)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Email já associado a outro utilizador";
+                    return resposta;
+                }
+
+
+
+                dadosutilizador.nome = utilizador.nome;
+                dadosutilizador.email = utilizador.email;
+                dadosutilizador.Role = utilizador.role;
+
+                _context.Update(dadosutilizador);
+                await _context.SaveChangesAsync();
+
+                resposta.Status = true;
+                resposta.Mensagem = "Utilizador atualizado com sucesso";
+                return resposta;
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Status = false;
+                resposta.Mensagem = $"Erro ao editar Utilizador {ex.Message}";
+                return resposta;
+            }
         }
     }
 }
