@@ -179,5 +179,37 @@ namespace SmartRecyclingApi.Services.Administrador
                 return resposta;
             }
         }
+
+        public async Task<ResponseModel<UtilizadorModel>> ApagarUtilizador(long id)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+
+            try
+            {
+
+                var autor = await _context.Utilizadores.FirstOrDefaultAsync(utbanco => utbanco.Id == id);
+
+                if(autor == null)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Não foi encontrado nenhum utilizador.";
+                    return resposta;
+                }
+
+                _context.Remove(autor);
+                await _context.SaveChangesAsync();
+
+                resposta.Status = true;
+                resposta.Mensagem = "Utilizador apagado";
+                return resposta;
+
+
+            }catch(Exception ex)
+            {
+                resposta.Status = false;
+                resposta.Mensagem = $"Erro ao apagar Utilizador {ex.Message}";
+                return resposta;
+            }
+        }
     }
 }

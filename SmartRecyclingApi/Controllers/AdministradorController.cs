@@ -47,5 +47,12 @@ namespace SmartRecyclingApi.Controllers
             var editar = await _administradorInterface.EditarUtilizador(utilizador);
             return Ok(editar);
         }
+
+        [HttpDelete("ApagarUtilizador")]
+        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> ApagarUtilizador(long id)
+        {
+            var utilizador = await _administradorInterface.ApagarUtilizador(id);
+            return Ok(utilizador);
+        }
     }
 }
