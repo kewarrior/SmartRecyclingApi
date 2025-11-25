@@ -220,7 +220,7 @@ namespace SmartRecyclingApi.Services.Administrador
             try
             {
 
-                if(adminUtilizador.email == null || adminUtilizador.nome == null || adminUtilizador.password == null)
+                if (adminUtilizador.email == null || adminUtilizador.nome == null || adminUtilizador.password == null)
                 {
                     resposta.Status = false;
                     resposta.Mensagem = "Dados obrigatorios nao preenchidos";
@@ -238,7 +238,7 @@ namespace SmartRecyclingApi.Services.Administrador
 
                 var existeEmail = await _context.Utilizadores.Where(emailbanco => emailbanco.email == normalizarEmail).FirstOrDefaultAsync();
 
-                if(existeEmail != null)
+                if (existeEmail != null)
                 {
                     resposta.Status = false;
                     resposta.Mensagem = "Email ja existente";
@@ -272,6 +272,62 @@ namespace SmartRecyclingApi.Services.Administrador
                 resposta.Mensagem = $"Erro ao criar Administrador: {ex.Message}";
                 return resposta;
 
+            }
+        }
+
+        public async Task<ResponseModel<UtilizadorModel>> CriarOperario(UtilizadorCriacaoDTO operarioUtilizador)
+        {
+            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+            try
+            {
+
+                if (operarioUtilizador.email == null || operarioUtilizador.nome == null || operarioUtilizador.password == null)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Dados obrigatorios nao preenchidos";
+                    return resposta;
+                }
+
+                var emailRegex = @"^[^@\s]+@[^@\s]+\.(pt|com)$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(operarioUtilizador.email ?? string.Empty, emailRegex))
+                {
+                    resposta.Mensagem = "O e-mail informado não é válido. Deve terminar com .pt ou .com";
+                    return resposta;
+                }
+
+                var normalizarEmail = operarioUtilizador.email.ToLower();
+
+                var existeEmail = await _context.Utilizadores.Where(operarioBanco => operarioBanco.email == normalizarEmail).FirstOrDefaultAsync();
+
+                if (existeEmail != null)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Email ja existente";
+                    return resposta;
+                }
+
+                var criptarPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(operarioUtilizador.password, 13);
+
+                var operario = new UtilizadorModel()
+                {
+                    nome = operarioUtilizador.nome,
+                    email = normalizarEmail,
+                    password = criptarPassword,
+                    Role = "Operador"
+                };
+
+                _context.Add(operario);
+                await _context.SaveChangesAsync();
+
+                resposta.Mensagem = "Operador Criado";
+                return resposta;
+
+            }
+            catch (Exception ex)
+            {
+                resposta.Status = false;
+                resposta.Mensagem = $"Erro ao criar Administrador: {ex.Message}";
+                return resposta;
             }
         }
     }

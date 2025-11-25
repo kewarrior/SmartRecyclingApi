@@ -61,5 +61,13 @@ namespace SmartRecyclingApi.Controllers
             var adminCriacao = await _administradorInterface.CriarADmin(admin);
             return Ok(adminCriacao);
         }
+
+
+        [HttpPost("CriarOperario")]
+        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> CriarOperario(UtilizadorCriacaoDTO operario)
+        {
+            var operarioCriacao = await _administradorInterface.CriarOperario(operario);
+            return Ok (operarioCriacao);
+        }
     }
 }
