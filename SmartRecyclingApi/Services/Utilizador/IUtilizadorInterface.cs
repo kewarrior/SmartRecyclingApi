@@ -9,7 +9,6 @@ namespace SmartRecyclingApi.Services.Utilizador
         Task<ResponseModel<UtilizadorModel>> GetUtilizarbyId(int idUtilizador);
         Task<ResponseModel<UtilizadorModel>> CriarUtilizador(UtilizadorCriacaoDTO utilizadorCriacaoDto);
         Task<ResponseModel<UtilizadorModel>> EditarUtilizador(EditarUtilizadorDto editarUtilizadorDto);
-
         Task<ResponseModel<UtilizadorModel>> Login( string email, string password);
 
     }

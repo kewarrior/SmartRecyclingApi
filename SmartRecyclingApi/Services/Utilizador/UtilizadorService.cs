@@ -111,6 +111,10 @@ namespace SmartRecyclingApi.Services.Utilizador
                     nome = utilizadorCriacaoDto.nome,
                     email = normalizaEmail,
                     password = criptarPassword,
+                    data_nascimento = utilizadorCriacaoDto.data_nascimento,
+                    telefone = utilizadorCriacaoDto.telefone,
+                    morada = utilizadorCriacaoDto.morada,
+                    codigo_postal = utilizadorCriacaoDto.codigopostal,
                     Role="Utilizador"
                 };
 
