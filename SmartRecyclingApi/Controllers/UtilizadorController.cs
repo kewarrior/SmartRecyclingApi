@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.Services.Utilizador;
 using SmartRecyclingApi.ViewModels.Utilizador;
@@ -12,7 +11,7 @@ namespace SmartRecyclingApi.Controllers
     {
         private readonly IUtilizadorInterface _utilizadorInterface;
 
-        public UtilizadorController (IUtilizadorInterface utilizadorInterface) 
+        public UtilizadorController(IUtilizadorInterface utilizadorInterface)
         {
             _utilizadorInterface = utilizadorInterface;
         }
@@ -35,22 +34,28 @@ namespace SmartRecyclingApi.Controllers
         [HttpPost("CriarUtilizador")]
         public async Task<ActionResult<ResponseModel<UtilizadorModel>>> CriarUtilizador(UtilizadorCriacaoDTO utilizadorCriacaoDto)
         {
-            var criarUtilizador = await _utilizadorInterface.CriarUtilizador(utilizadorCriacaoDto);
-            return Ok(criarUtilizador);
+
+            var resposta = await _utilizadorInterface.CriarUtilizador(utilizadorCriacaoDto);
+
+            if (resposta.Status == false)
+            {
+                return BadRequest(resposta);
+            }
+            return Ok(resposta);
         }
 
         [HttpPut("EditarUtilizador")]
         public async Task<ActionResult<ResponseModel<UtilizadorModel>>> EditarUtilizador(EditarUtilizadorDto editarUtilizadorDto)
         {
             var editarUtilizador = await _utilizadorInterface.EditarUtilizador(editarUtilizadorDto);
-            return Ok (editarUtilizador);
+            return Ok(editarUtilizador);
         }
 
         [HttpGet("Login")]
 
         public async Task<ActionResult<ResponseModel<UtilizadorModel>>> Login(string email, string password)
         {
-            var login = await _utilizadorInterface.Login( email,password);
+            var login = await _utilizadorInterface.Login(email, password);
             return Ok(login);
         }
     }

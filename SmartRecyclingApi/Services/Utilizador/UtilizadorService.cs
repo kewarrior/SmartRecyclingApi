@@ -86,6 +86,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                     .Any(string.IsNullOrEmpty))
                 {
                     resposta.Mensagem = "Nome, e-mail e palavra-passe são obrigatórios.";
+                    resposta.Status = false;
                     return resposta;
                 }
 
@@ -93,6 +94,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                 if (!System.Text.RegularExpressions.Regex.IsMatch(utilizadorCriacaoDto.email ?? string.Empty, emailRegex))
                 {
                     resposta.Mensagem = "O e-mail informado não é válido. Deve terminar com .pt ou .com";
+                    resposta.Status = false;
                     return resposta;
                 }
 
@@ -101,6 +103,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                 if (existeEmail != null)
                 {
                     resposta.Mensagem = "O endereço de e-mail já está associado a outro utilizador ";
+                    resposta.Status = false;
                     return resposta;
                 }
 
@@ -121,8 +124,8 @@ namespace SmartRecyclingApi.Services.Utilizador
                 _context.Add(utilizador);
                 await _context.SaveChangesAsync();
 
-                resposta.Dados = utilizador;
                 resposta.Mensagem = "Utilizador Criado com Sucesso";
+                resposta.Status = true;
                 return resposta;
 
             }
@@ -144,12 +147,14 @@ namespace SmartRecyclingApi.Services.Utilizador
                 if (utilizador == null)
                 {
                     resposta.Mensagem = "Utilizador não encontrado";
+                    resposta.Status = false;
                     return resposta;
                 }
                 var emailRegex = @"^[^@\s]+@[^@\s]+\.(pt|com)$";
                 if (!System.Text.RegularExpressions.Regex.IsMatch(editarUtilizadorDto.email ?? string.Empty, emailRegex))
                 {
                     resposta.Mensagem = "O e-mail informado não é válido. Deve terminar com .pt ou .com";
+                    resposta.Status = false;
                     return resposta;
                 }
 
@@ -158,6 +163,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                 if (existeEmail != null)
                 {
                     resposta.Mensagem = "O endereço de e-mail já está associado a outro utilizador ";
+                    resposta.Status = false;
                     return resposta;
                 }
 
