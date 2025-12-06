@@ -206,6 +206,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                 if (utilizador == null)
                 {
                     resposta.Mensagem = "Dados Incorretos";
+                    resposta.Status = false;
                     return resposta;
                 }
 
@@ -214,6 +215,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                 if (passwordValida == false)
                 {
                     resposta.Mensagem = "Dados Incorretos";
+                    resposta.Status = false;
                     return resposta;
                 }
 

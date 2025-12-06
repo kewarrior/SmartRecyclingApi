@@ -34,7 +34,7 @@ namespace SmartRecyclingApi.Controllers
         [HttpPost("CriarUtilizador")]
         public async Task<ActionResult<ResponseModel<UtilizadorModel>>> CriarUtilizador(UtilizadorCriacaoDTO utilizadorCriacaoDto)
         {
-
+    
             var resposta = await _utilizadorInterface.CriarUtilizador(utilizadorCriacaoDto);
 
             if (resposta.Status == false)
