@@ -106,8 +106,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                     resposta.Status = false;
                     return resposta;
                 }
-
-                var criptarPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(utilizadorCriacaoDto.password, 13);
+                var criptarPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(utilizadorCriacaoDto.password, 10);
 
                 var utilizador = new UtilizadorModel()
                 {
@@ -175,7 +174,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                 utilizador.morada = editarUtilizadorDto.morada;
                 utilizador.codigo_postal = editarUtilizadorDto.codigo_postal;
                 utilizador.telefone = editarUtilizadorDto.telefone;
-
+    
                 _context.Update(utilizador);
                 await _context.SaveChangesAsync();
 
