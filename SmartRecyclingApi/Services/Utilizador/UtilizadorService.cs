@@ -70,7 +70,18 @@ namespace SmartRecyclingApi.Services.Utilizador
                     return resposta;
                 }
 
-                resposta.Dados = utilizador;
+                resposta.Dados = new UtilizadorModel
+                {
+                    Id = utilizador.Id,
+                    nome = utilizador.nome,
+                    data_nascimento = utilizador.data_nascimento,
+                    morada = utilizador.morada,
+                    email = utilizador.email,
+                    adesao = utilizador.adesao,
+                    status = utilizador.status,
+                    Role = utilizador.Role,
+                    telefone = utilizador.telefone,  
+                };
                 resposta.Mensagem = "Foi encontrado o utilizador";
                 return resposta;
 
