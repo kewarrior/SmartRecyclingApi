@@ -36,7 +36,7 @@ namespace SmartRecyclingApi.Controllers
         [HttpPost("CriarUtilizador")]
         public async Task<ActionResult<ResponseModel<UtilizadorModel>>> CriarUtilizador(UtilizadorCriacaoDTO utilizadorCriacaoDto)
         {
-    
+
             var resposta = await _utilizadorInterface.CriarUtilizador(utilizadorCriacaoDto);
 
             if (resposta.Status == false)
@@ -69,15 +69,15 @@ namespace SmartRecyclingApi.Controllers
             {
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddSeconds(response.Dados.Expira),
-                Secure = true, 
+                Secure = true,
                 SameSite = SameSiteMode.Strict
             };
 
             Response.Cookies.Append("accessToken", response.Dados.AcessoToken, cookieOptions);
 
-            return Ok(new 
-            { 
-                Mensagem = "Login com sucesso. O token foi definido no cookie." ,
+            return Ok(new
+            {
+                Mensagem = "Login com sucesso. O token foi definido no cookie.",
                 Status = true
             });
         }
@@ -97,6 +97,7 @@ namespace SmartRecyclingApi.Controllers
                 Role = role
             });
         }
+
         [Authorize]
         [HttpPost("logout")]
         public IActionResult Logout()
