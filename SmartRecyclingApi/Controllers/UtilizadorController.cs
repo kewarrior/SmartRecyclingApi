@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.Services.Utilizador;
 using SmartRecyclingApi.ViewModels.Utilizador;
@@ -7,6 +8,7 @@ namespace SmartRecyclingApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UtilizadorController : ControllerBase
     {
         private readonly IUtilizadorInterface _utilizadorInterface;
@@ -51,12 +53,19 @@ namespace SmartRecyclingApi.Controllers
             return Ok(editarUtilizador);
         }
 
-        [HttpGet("Login")]
 
-        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> Login(string email, string password)
+        [AllowAnonymous]
+        [HttpPost("Login")]
+
+        public async Task<ActionResult<ResponseModel<LoginResponseModel>>> Login(LoginRequest request)
         {
-            var login = await _utilizadorInterface.Login(email, password);
-            return Ok(login);
+            var result = await _utilizadorInterface.Login(request);
+            if (result.Status == false) 
+            {
+                return Unauthorized();
+            }
+            return Ok(result);
+
         }
     }
 }

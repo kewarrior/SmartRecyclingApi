@@ -1,16 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SmartRecyclingApi.Data;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.ViewModels.Utilizador;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace SmartRecyclingApi.Services.Utilizador
 {
     public class UtilizadorService : IUtilizadorInterface
     {
         private readonly AppDbContext _context;
-        public UtilizadorService(AppDbContext context)
+        private readonly IConfiguration _configuration;
+
+        public UtilizadorService(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<ResponseModel<List<UtilizadorModel>>> GetUtilizadores()
@@ -117,7 +124,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                     telefone = utilizadorCriacaoDto.telefone,
                     morada = utilizadorCriacaoDto.morada,
                     codigo_postal = utilizadorCriacaoDto.codigopostal,
-                    Role="Utilizador"
+                    Role = "Utilizador"
                 };
 
                 _context.Add(utilizador);
@@ -174,7 +181,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                 utilizador.morada = editarUtilizadorDto.morada;
                 utilizador.codigo_postal = editarUtilizadorDto.codigo_postal;
                 utilizador.telefone = editarUtilizadorDto.telefone;
-    
+
                 _context.Update(utilizador);
                 await _context.SaveChangesAsync();
 
@@ -188,19 +195,20 @@ namespace SmartRecyclingApi.Services.Utilizador
                 return resposta;
             }
         }
-        public async Task<ResponseModel<UtilizadorModel>> Login(string email, string password)
+        public async Task<ResponseModel<LoginResponseModel>> Login(LoginRequest request)
         {
-            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+            ResponseModel<LoginResponseModel> resposta = new ResponseModel<LoginResponseModel>();
             try
             {
 
-                if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)){
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                {
                     resposta.Mensagem = "É necessário preencher os dados de Email e Palavra-Passe";
                     resposta.Status = false;
                     return resposta;
                 }
 
-                var emailNormalizado = email.ToLower();
+                var emailNormalizado = request.Email.ToLower();
                 var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(utilizadorlogin => utilizadorlogin.email == emailNormalizado);
 
                 if (utilizador == null)
@@ -210,30 +218,48 @@ namespace SmartRecyclingApi.Services.Utilizador
                     return resposta;
                 }
 
-                var passwordValida = BCrypt.Net.BCrypt.EnhancedVerify(password, utilizador.password);
+                var passwordValida = BCrypt.Net.BCrypt.EnhancedVerify(request.Password, utilizador.password);
 
-                if (passwordValida == false)
+                if (!passwordValida)
                 {
                     resposta.Mensagem = "Dados Incorretos";
                     resposta.Status = false;
                     return resposta;
                 }
 
-                resposta.Dados = new UtilizadorModel
+                var issuer = _configuration["JwtConfig:Issuer"];
+                var audience = _configuration["JwtConfig:Audience"];
+                var key = _configuration["JwtConfig:Key"];
+                var tokenValidityMins = _configuration.GetValue<int>("JwtConfig:TokenValidityMins");
+                var tokenExpiryTimeStamp = DateTime.UtcNow.AddMinutes(tokenValidityMins);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    email = utilizador.email,
-                    nome = utilizador.nome,
-                    status = utilizador.status,
-                    morada = utilizador.morada,
-                    codigo_postal = utilizador.codigo_postal,
-                    telefone = utilizador.telefone,
-                    pontos = utilizador.pontos,
-                    adesao = utilizador.adesao,
-                    data_nascimento = utilizador.data_nascimento,
+                    Subject = new ClaimsIdentity(new[]
+                    {
+                        new Claim(JwtRegisteredClaimNames.Email, request.Email),
+                        new Claim(ClaimTypes.Name, utilizador.nome),
+                        new Claim(ClaimTypes.Role, utilizador.Role)
+
+                    }),
+                    Expires = tokenExpiryTimeStamp,
+                    Issuer = issuer,
+                    Audience = audience,
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),SecurityAlgorithms.HmacSha256Signature),
                 };
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                var acessToken = tokenHandler.WriteToken(securityToken);
+
+                resposta.Dados = new LoginResponseModel
+                {
+                    AcessoToken = acessToken,
+                    Expira = (int)tokenExpiryTimeStamp.Subtract(DateTime.UtcNow).TotalSeconds
+                };
+                resposta.Status = true;
                 resposta.Mensagem = "Login com Sucesso";
                 return resposta;
-
             }
             catch (Exception ex)
             {
