@@ -55,17 +55,47 @@ namespace SmartRecyclingApi.Controllers
 
 
         [AllowAnonymous]
-        [HttpPost("Login")]
-
-        public async Task<ActionResult<ResponseModel<LoginResponseModel>>> Login(LoginRequest request)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequest request)
         {
-            var result = await _utilizadorInterface.Login(request);
-            if (result.Status == false) 
-            {
-                return Unauthorized();
-            }
-            return Ok(result);
+            var response = await _utilizadorInterface.Login(request);
 
+            if (!response.Status || response.Dados == null)
+            {
+                return Unauthorized(new { response.Mensagem });
+            }
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddSeconds(response.Dados.Expira),
+                Secure = true, 
+                SameSite = SameSiteMode.Strict
+            };
+
+            Response.Cookies.Append("accessToken", response.Dados.AcessoToken, cookieOptions);
+
+            return Ok(new 
+            { 
+                Mensagem = "Login com sucesso. O token foi definido no cookie." ,
+                Status = true
+            });
+        }
+
+        [Authorize]
+        [HttpGet("UtilizadorInfo")]
+        public IActionResult GetUserInfo()
+        {
+            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            var nome = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+            return Ok(new
+            {
+                Email = email,
+                Nome = nome,
+                Role = role
+            });
         }
     }
 }
