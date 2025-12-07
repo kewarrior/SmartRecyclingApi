@@ -97,5 +97,23 @@ namespace SmartRecyclingApi.Controllers
                 Role = role
             });
         }
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Append("accessToken", "", new CookieOptions
+            {
+                Expires = DateTime.UtcNow.AddDays(-1),
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
+
+            return Ok(new
+            {
+                Mensagem = "Logout realizado com sucesso.",
+                Status = true
+            });
+        }
     }
 }
