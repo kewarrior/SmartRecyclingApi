@@ -82,7 +82,6 @@ namespace SmartRecyclingApi.Controllers
             });
         }
 
-        [Authorize]
         [HttpGet("UtilizadorInfo")]
         public IActionResult GetUserInfo()
         {
@@ -98,7 +97,6 @@ namespace SmartRecyclingApi.Controllers
             });
         }
 
-        [Authorize]
         [HttpPost("logout")]
         public IActionResult Logout()
         {
