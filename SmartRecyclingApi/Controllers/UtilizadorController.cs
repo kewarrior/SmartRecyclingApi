@@ -85,13 +85,12 @@ namespace SmartRecyclingApi.Controllers
         [HttpGet("UtilizadorInfo")]
         public IActionResult GetUserInfo()
         {
-            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+
             var nome = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
             var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
 
             return Ok(new
             {
-                Email = email,
                 Nome = nome,
                 Role = role
             });
