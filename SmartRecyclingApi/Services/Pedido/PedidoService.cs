@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.ViewModels.Pedido;
-using System.Linq.Expressions;
 
 namespace SmartRecyclingApi.Services.Pedido
 {

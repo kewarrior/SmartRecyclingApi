@@ -36,7 +36,7 @@ namespace SmartRecyclingApi.Controllers
             return Ok (pedido);
         }
 
-
+        [Authorize(Roles = "administrador")]
         [HttpGet("GetPedidoPendentes")]
         public async Task<ActionResult<ResponseModel<List<PedidoModel>>>> GetPedidoPendentes()
         {

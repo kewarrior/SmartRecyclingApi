@@ -33,6 +33,7 @@ namespace SmartRecyclingApi.Controllers
             return Ok(utilizador);
         }
 
+        [AllowAnonymous]
         [HttpPost("CriarUtilizador")]
         public async Task<ActionResult<ResponseModel<UtilizadorModel>>> CriarUtilizador(UtilizadorCriacaoDTO utilizadorCriacaoDto)
         {
