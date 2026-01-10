@@ -29,8 +29,8 @@ namespace SmartRecyclingApi.Controllers
         }
 
 
-        [HttpPost("ValidarAdministrador")]
-        public async Task<ActionResult<ResponseModel<object>>> ValidarAdministrador(UtilizadorCriacaoDTO verificarUtilizador)
+        [HttpPost("ValidarPassword")]
+        public async Task<ActionResult<ResponseModel<LoginRequest>>> ValidarAdministrador([FromBody] LoginRequest verificarUtilizador)
         {
             var validacao = await _administradorInterface.ValidarPassword(verificarUtilizador);
             return Ok(validacao);

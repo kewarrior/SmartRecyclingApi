@@ -49,14 +49,14 @@ namespace SmartRecyclingApi.Services.Administrador
         }
 
 
-        public async Task<ResponseModel<object>> ValidarPassword(UtilizadorCriacaoDTO verificarUtilizador)
+        public async Task<ResponseModel<object>> ValidarPassword(LoginRequest verificarUtilizador)
         {
             ResponseModel<object> resposta = new ResponseModel<object>();
 
             try
             {
 
-                var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.Id == verificarUtilizador.Id);
+                var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.email == verificarUtilizador.Email);
 
                 if (utilizador == null)
                 {
@@ -65,7 +65,7 @@ namespace SmartRecyclingApi.Services.Administrador
                     return resposta;
                 }
 
-                var validarPassword = BCrypt.Net.BCrypt.EnhancedVerify(verificarUtilizador.password, utilizador.password);
+                var validarPassword = BCrypt.Net.BCrypt.EnhancedVerify(verificarUtilizador.Password, utilizador.password);
 
                 if (!validarPassword)
                 {
