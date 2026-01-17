@@ -81,6 +81,7 @@ namespace SmartRecyclingApi.Services.Utilizador
                     status = utilizador.status,
                     Role = utilizador.Role,
                     telefone = utilizador.telefone,  
+                    codigo_postal = utilizador.codigo_postal
                 };
                 resposta.Mensagem = "Foi encontrado o utilizador";
                 return resposta;

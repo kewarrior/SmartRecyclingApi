@@ -162,9 +162,9 @@ namespace SmartRecyclingApi.Services.Administrador
 
                 dadosutilizador.nome = utilizador.nome;
                 dadosutilizador.morada = utilizador.morada;
-                dadosutilizador.codigo_postal = utilizador.codigoPostal;
+                dadosutilizador.codigo_postal = utilizador.codigo_postal;
                 dadosutilizador.telefone = utilizador.telefone;
-                dadosutilizador.data_nascimento = utilizador.dataNascimento;
+                dadosutilizador.data_nascimento = utilizador.data_nascimento;
 
                 _context.Update(dadosutilizador);
                 await _context.SaveChangesAsync();
