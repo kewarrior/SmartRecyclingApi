@@ -133,13 +133,13 @@ namespace SmartRecyclingApi.Services.Administrador
             return resposta;
         }
 
-        public async Task<ResponseModel<UtilizadorModel>> EditarUtilizador(UtilizadorCriacaoDTO utilizador)
+        public async Task<ResponseModel<EditarUtilizadorAdminViewModel>> EditarUtilizador(EditarUtilizadorAdminViewModel utilizador)
         {
-            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+            ResponseModel<EditarUtilizadorAdminViewModel> resposta = new ResponseModel<EditarUtilizadorAdminViewModel>();
 
             try
             {
-                if (utilizador.Id == 0 || utilizador.nome == null || utilizador.email == null)
+                if (utilizador.Id == 0 || utilizador.nome == null)
                 {
                     resposta.Status = false;
                     resposta.Mensagem = "Dados inválidos: Id, nome, email sao obrigatórios";
@@ -149,20 +149,22 @@ namespace SmartRecyclingApi.Services.Administrador
 
                 var dadosutilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.Id == utilizador.Id);
 
-                var emailExistente = await _context.Utilizadores.Where(u => u.email == utilizador.email).FirstOrDefaultAsync();
+                var moradaExistente = await _context.Utilizadores.Where(u => u.morada == utilizador.morada).FirstOrDefaultAsync();
 
-                if (emailExistente != null && emailExistente.Id != utilizador.Id)
+                if (moradaExistente != null && moradaExistente.Id != utilizador.Id)
                 {
                     resposta.Status = false;
-                    resposta.Mensagem = "Email já associado a outro utilizador";
+                    resposta.Mensagem = "Esta morada já esta associada a outro utilizador";
                     return resposta;
                 }
 
 
 
                 dadosutilizador.nome = utilizador.nome;
-                dadosutilizador.email = utilizador.email;
-                dadosutilizador.Role = utilizador.role;
+                dadosutilizador.morada = utilizador.morada;
+                dadosutilizador.codigo_postal = utilizador.codigoPostal;
+                dadosutilizador.telefone = utilizador.telefone;
+                dadosutilizador.data_nascimento = utilizador.dataNascimento;
 
                 _context.Update(dadosutilizador);
                 await _context.SaveChangesAsync();

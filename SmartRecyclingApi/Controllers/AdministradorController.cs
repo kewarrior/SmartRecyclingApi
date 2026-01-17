@@ -44,7 +44,7 @@ namespace SmartRecyclingApi.Controllers
         }
 
         [HttpPut("EditarUtilizador")]
-        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> Editar(UtilizadorCriacaoDTO utilizador)
+        public async Task<ActionResult<ResponseModel<UtilizadorModel>>> Editar(EditarUtilizadorAdminViewModel utilizador)
         {
             var editar = await _administradorInterface.EditarUtilizador(utilizador);
             return Ok(editar);
