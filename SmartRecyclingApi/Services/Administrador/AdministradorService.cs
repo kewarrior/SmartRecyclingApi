@@ -108,7 +108,8 @@ namespace SmartRecyclingApi.Services.Administrador
                         Id = u.Id,
                         nome = u.nome,
                         email = u.email,
-                        Role = u.Role
+                        Role = u.Role,
+                        adesao = u.adesao
                     }).ToListAsync();
 
                 if (utilizadores.Count <= 0)
