@@ -254,6 +254,9 @@ namespace SmartRecyclingApi.Services.Administrador
                 {
                     email = normalizarEmail,
                     password = criptarPassword,
+                    morada = adminUtilizador.morada,
+                    codigo_postal = adminUtilizador.codigo_postal,
+                    telefone = adminUtilizador.telefone,
                     Role = "Administrador"
 
                 };
@@ -261,8 +264,6 @@ namespace SmartRecyclingApi.Services.Administrador
                 _context.Add(admin);
                 await _context.SaveChangesAsync();
 
-
-                resposta.Dados = admin;
                 resposta.Status = true;
                 resposta.Mensagem = "Administrador Criado";
                 return resposta;
@@ -295,6 +296,7 @@ namespace SmartRecyclingApi.Services.Administrador
                 if (!System.Text.RegularExpressions.Regex.IsMatch(operarioUtilizador.email ?? string.Empty, emailRegex))
                 {
                     resposta.Mensagem = "O e-mail informado não é válido. Deve terminar com .pt ou .com";
+                    resposta.Status = false;
                     return resposta;
                 }
 
@@ -316,12 +318,16 @@ namespace SmartRecyclingApi.Services.Administrador
                     nome = operarioUtilizador.nome,
                     email = normalizarEmail,
                     password = criptarPassword,
+                    morada = operarioUtilizador.morada,
+                    codigo_postal = operarioUtilizador.codigo_postal,
+                    telefone = operarioUtilizador.telefone,
                     Role = "Operador"
                 };
 
                 _context.Add(operario);
                 await _context.SaveChangesAsync();
 
+                resposta.Status = true;
                 resposta.Mensagem = "Operador Criado";
                 return resposta;
 
