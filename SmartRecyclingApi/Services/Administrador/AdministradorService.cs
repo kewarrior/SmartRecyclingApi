@@ -244,7 +244,7 @@ namespace SmartRecyclingApi.Services.Administrador
                 if (existeEmail != null)
                 {
                     resposta.Status = false;
-                    resposta.Mensagem = "Email ja existente";
+                    resposta.Mensagem = "Email já existente";
                     return resposta;
                 }
 
@@ -252,6 +252,7 @@ namespace SmartRecyclingApi.Services.Administrador
 
                 var admin = new UtilizadorModel()
                 {
+                    nome = adminUtilizador.nome,
                     email = normalizarEmail,
                     password = criptarPassword,
                     morada = adminUtilizador.morada,
