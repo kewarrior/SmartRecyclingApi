@@ -21,6 +21,7 @@ namespace SmartRecyclingApi.Services.Operador
             if (reciclagem.ref_Utilizador == 0)
             {
                 resposta.Mensagem = "Id do utilizador é obrigatorio";
+                resposta.Status = false;
                 return resposta;
             }
 
@@ -29,6 +30,7 @@ namespace SmartRecyclingApi.Services.Operador
             if (utilizadorExistente == null)
             {
                 resposta.Mensagem = "Utilizador não existente.";
+                resposta.Status = false;
                 return resposta;
             }
 
@@ -54,6 +56,7 @@ namespace SmartRecyclingApi.Services.Operador
             {
                 resposta.Mensagem = ex.Message;
                 resposta.Status = false;
+                return resposta;
             }
             return resposta;
 
