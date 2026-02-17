@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
 using SmartRecyclingApi.Models;
+using SmartRecyclingApi.ViewModels.Operador;
 
 
 namespace SmartRecyclingApi.Services.Operador
@@ -93,6 +94,34 @@ namespace SmartRecyclingApi.Services.Operador
             return resposta;
         }
 
+        public async Task<ResponseModel<List<OperUtilizadorView>>> GetUtilizadores()
+        {
+            ResponseModel<List<OperUtilizadorView>> resposta = new ResponseModel<List<OperUtilizadorView>>();
+            try
+            {
+                var utilizadores = await _context.Utilizadores.Where(ut => ut.Role == "Utilizador").Select(ut => new OperUtilizadorView
+                {
+                    Id = ut.Id,
+                    Nome = ut.nome,
+                }).ToListAsync();
 
+                if (utilizadores.Count == 0)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Sem utilizadores";
+                }
+
+                resposta.Dados = utilizadores;
+                resposta.Mensagem = $"Foram encontrados : {utilizadores.Count}";
+                resposta.Status = true;
+                return resposta;
+            }
+            catch (Exception ex)
+            {
+                resposta.Status = false;
+                resposta.Mensagem = $"Erro desconhecido: {ex.Message}";
+                return resposta;
+            }
+        }
     }
 }

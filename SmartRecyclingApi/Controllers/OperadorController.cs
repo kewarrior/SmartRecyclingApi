@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.Services.Operador;
 using SmartRecyclingApi.Services.Pedido;
+using SmartRecyclingApi.ViewModels.Operador;
 
 namespace SmartRecyclingApi.Controllers
 {
@@ -32,6 +33,12 @@ namespace SmartRecyclingApi.Controllers
         public async Task<ActionResult<ResponseModel<UtilizadorModel>>> GetNomeOperador(long id)
         {
             var nomeOperador = await _operadorInterface.GetNomeOperador(id);
+            return Ok (nomeOperador); 
+        }
+        [HttpGet("GetUtilizadores")]
+        public async Task<ActionResult<ResponseModel<OperUtilizadorView>>> GetUtilizadores()
+        {
+            var nomeOperador = await _operadorInterface.GetUtilizadores();
             return Ok (nomeOperador); 
         }
     }
