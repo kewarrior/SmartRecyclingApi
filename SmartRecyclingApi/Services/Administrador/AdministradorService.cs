@@ -74,7 +74,7 @@ namespace SmartRecyclingApi.Services.Administrador
                     return resposta;
                 }
 
-                if (utilizador.Role != "administrador")
+                if (utilizador.Role != "Administrador")
                 {
                     resposta.Status = false;
                     resposta.Mensagem = " Utilizador não tem permissoes de administrador";
