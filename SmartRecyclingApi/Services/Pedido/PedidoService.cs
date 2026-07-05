@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
 using SmartRecyclingApi.Models;
+using SmartRecyclingApi.ViewModels;
 using SmartRecyclingApi.ViewModels.Pedido;
 
 namespace SmartRecyclingApi.Services.Pedido
@@ -89,21 +90,33 @@ namespace SmartRecyclingApi.Services.Pedido
             }
             return resposta;
         }
-        public async Task<ResponseModel<List<PedidoModel>>> GetPedidoPendentes()
+        public async Task<ResponseModel<List<PedidoDTO>>> GetPedidoPendentes()
         {
-            ResponseModel<List<PedidoModel>> resposta = new ResponseModel<List<PedidoModel>>();
+            ResponseModel<List<PedidoDTO>> resposta = new ResponseModel<List<PedidoDTO>>();
             try
             {
-                var pedidos = _context.Pedido.Where(u => u.Status_Pedido == "Pendente").ToList();
+                var pedidos = await (from p in _context.Pedido
+                                     join u in _context.Utilizadores on p.ref_Utilizador equals u.Id
+                                     where p.Status_Pedido == "Pendente"
+                                     select new PedidoDTO
+                                     {
+                                         Id = p.Id,
+                                         Tipo_Pedido = p.Tipo_Pedido,
+                                         Status_Pedido = p.Status_Pedido,
+                                         Data_Criacao = p.Data_Criacao,
+                                         NomeUtilizador = u.nome
+                                     }
+                                     ).ToListAsync();
 
-                if (pedidos == null)
+                if (!pedidos.Any())
                 {
                     resposta.Mensagem = "Sem pedidos para mostrar";
+                    return resposta;
                 }
 
                 resposta.Dados = pedidos;
                 resposta.Mensagem = "Pedidos Encontrados";
-                return resposta;
+                resposta.Status = true;
             }
             catch (Exception ex)
             {
@@ -111,7 +124,6 @@ namespace SmartRecyclingApi.Services.Pedido
                 resposta.Status = false;
             }
             return resposta;
-
         }
     }
 }
