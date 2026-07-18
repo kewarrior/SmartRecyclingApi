@@ -84,7 +84,7 @@ namespace SmartRecyclingApi.Services.Administrador
 
                 var verificarPedidos = await (from p in _context.Pedido
                                               join u in _context.Utilizadores on p.ref_Utilizador equals u.Id
-                                              where ids.Contains(p.Id) && p.Status_Pedido == EnumStatusPedido.Pendente && u.adesao == false
+                                              where ids.Contains(p.Id) && p.Status_Pedido == EnumStatusPedido.Pendente
                                               select new
                                               {
                                                   PedidoId = p.Id,
