@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
+using SmartRecyclingApi.Enums;
 using SmartRecyclingApi.Models;
+using SmartRecyclingApi.ViewModels;
 using SmartRecyclingApi.ViewModels.Utilizador;
 
 namespace SmartRecyclingApi.Services.Administrador
@@ -20,30 +22,55 @@ namespace SmartRecyclingApi.Services.Administrador
 
             try
             {
-
-                var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.Id == id && (u.adesao == false || u.adesao == null));
-
-                if (utilizador == null)
+                var pedido = await _context.Pedido.FindAsync(id);
+                if (pedido == null)
                 {
                     resposta.Status = false;
-                    resposta.Mensagem = "Utilizador não encontrado ou adesão já aceite";
+                    resposta.Mensagem = "Pedido nao existe";
+                    return resposta;
+                }
+                else if (pedido != null && pedido.Status_Pedido == EnumStatusPedido.Aceite)
+                {
+                    resposta.Status = false;
+                    resposta.Mensagem = "Pedido já foi aceite";
                     return resposta;
                 }
 
-                var updateStatus = await _context.Utilizadores.Where(u => u.Id == id).ExecuteUpdateAsync(set => set.SetProperty(p => p.adesao, true));
+                var query = await (from p in _context.Pedido
+                                   join u in _context.Utilizadores on p.ref_Utilizador equals u.Id
+                                   where u.adesao == false 
+                                   && p.Status_Pedido == EnumStatusPedido.Pendente 
+                                   && p.Id == id
+                                   select new PedidoDTO
+                                   {
+                                       Id = p.Id,
+                                       ref_Utilizador = p.ref_Utilizador
+                                   }).FirstOrDefaultAsync();
 
-                var apagarPedido = await _context.Pedido.Where(u => u.ref_Utilizador == id).ExecuteDeleteAsync();
+                if(query != null)
+                {
+                    var updateStatus = await _context.Utilizadores.Where(u => u.Id == query.ref_Utilizador).ExecuteUpdateAsync(set => set.SetProperty(p => p.adesao, true));
 
-                resposta.Dados = utilizador.nome;
-                resposta.Status = true;
-                resposta.Mensagem = $"Adesão do utilizador {utilizador.nome} aceite com sucesso e pedido removido";
-                return resposta;
+                    var atualizarPedido = await _context.Pedido.Where(u => u.Id == id).ExecuteUpdateAsync(set => set.SetProperty(s => s.Status_Pedido, EnumStatusPedido.Aceite));
+
+                    if (updateStatus > 0 && atualizarPedido > 0)
+                    {
+                        resposta.Status = true;
+                        resposta.Mensagem = "Pedido Aceite";
+                        return resposta;
+                    }
+                    else
+                    {
+                        resposta.Status = false;
+                        resposta.Mensagem = "Ocorreu um erro a aceitar pedido";
+                        return resposta;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 resposta.Status = false;
                 resposta.Mensagem = $"Erro ao aceitar pedido: {ex.Message}";
-
             }
             return resposta;
         }
