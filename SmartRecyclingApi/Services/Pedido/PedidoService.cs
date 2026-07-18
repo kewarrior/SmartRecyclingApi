@@ -101,6 +101,7 @@ namespace SmartRecyclingApi.Services.Pedido
                                      select new PedidoDTO
                                      {
                                          Id = p.Id,
+                                         ref_Utilizador = p.ref_Utilizador,
                                          Tipo_Pedido = p.Tipo_Pedido,
                                          Status_Pedido = p.Status_Pedido,
                                          Data_Criacao = p.Data_Criacao,
