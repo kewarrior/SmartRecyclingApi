@@ -21,7 +21,7 @@ namespace SmartRecyclingApi.Services.Administrador
             try
             {
 
-                var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.Id == id && u.adesao == false);
+                var utilizador = await _context.Utilizadores.FirstOrDefaultAsync(u => u.Id == id && (u.adesao == false || u.adesao == null));
 
                 if (utilizador == null)
                 {
@@ -282,7 +282,7 @@ namespace SmartRecyclingApi.Services.Administrador
 
         public async Task<ResponseModel<UtilizadorModel>> CriarOperario(UtilizadorCriacaoDTO operarioUtilizador)
         {
-            ResponseModel<UtilizadorModel> resposta = new ResponseModel<UtilizadorModel>();
+            var resposta = new ResponseModel<UtilizadorModel>();
             try
             {
 
