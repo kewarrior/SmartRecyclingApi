@@ -27,6 +27,12 @@ namespace SmartRecyclingApi.Controllers
             var update = await _administradorInterface.UpdatePedido(id);
             return Ok(update);
         }
+        [HttpPost("AceitarVariosPedido")]
+        public async Task<ActionResult<ResponseModel<object>>> AceitarVariosPedido(List<long> ids)
+        {
+            var update = await _administradorInterface.AceitarVariosPedidos(ids);
+            return Ok(update);
+        }
 
 
         [HttpPost("ValidarPassword")]

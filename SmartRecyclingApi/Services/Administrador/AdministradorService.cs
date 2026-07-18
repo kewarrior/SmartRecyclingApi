@@ -38,8 +38,8 @@ namespace SmartRecyclingApi.Services.Administrador
 
                 var query = await (from p in _context.Pedido
                                    join u in _context.Utilizadores on p.ref_Utilizador equals u.Id
-                                   where u.adesao == false 
-                                   && p.Status_Pedido == EnumStatusPedido.Pendente 
+                                   where u.adesao == false
+                                   && p.Status_Pedido == EnumStatusPedido.Pendente
                                    && p.Id == id
                                    select new PedidoDTO
                                    {
@@ -47,7 +47,7 @@ namespace SmartRecyclingApi.Services.Administrador
                                        ref_Utilizador = p.ref_Utilizador
                                    }).FirstOrDefaultAsync();
 
-                if(query != null)
+                if (query != null)
                 {
                     var updateStatus = await _context.Utilizadores.Where(u => u.Id == query.ref_Utilizador).ExecuteUpdateAsync(set => set.SetProperty(p => p.adesao, true));
 
@@ -66,6 +66,77 @@ namespace SmartRecyclingApi.Services.Administrador
                         return resposta;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                resposta.Status = false;
+                resposta.Mensagem = $"Erro ao aceitar pedido: {ex.Message}";
+            }
+            return resposta;
+        }
+        public async Task<ResponseModel<object>> AceitarVariosPedidos(List<long> ids)
+        {
+            var resposta = new ResponseModel<object>();
+            var resultados = new List<object>();
+
+            try
+            {
+
+                var verificarPedidos = await (from p in _context.Pedido
+                                              join u in _context.Utilizadores on p.ref_Utilizador equals u.Id
+                                              where ids.Contains(p.Id) && p.Status_Pedido == EnumStatusPedido.Pendente && u.adesao == false
+                                              select new
+                                              {
+                                                  PedidoId = p.Id,
+                                                  UtilizadorId = u.Id,
+                                                  Status_Pedido = p.Status_Pedido,
+                                                  Adesao = u.adesao,
+                                                  NomeUtilizador = u.nome
+                                              }).ToListAsync();
+                var pedidosValidos = new List<long>();
+                var utilizadoresValidos = new List<long>();
+
+
+                foreach (var id in ids)
+                {
+                    var detalhe = verificarPedidos.FirstOrDefault(p => p.PedidoId == id);
+
+                    if (detalhe == null)
+                    {
+                        resultados.Add(new { Id = id, Sucesso = false, Mensagem = $"Pedido {detalhe?.PedidoId} não existe ." });
+                    }
+                    else if (detalhe.Status_Pedido == EnumStatusPedido.Aceite)
+                    {
+                        resultados.Add(new { Id = id, Sucesso = false, Mensagem = $"Pedido {detalhe.PedidoId} já foi aceite." });
+                    }
+                    else if (detalhe.Adesao == true)
+                    {
+                        resultados.Add(new { Id = id, Sucesso = false, Mensagem = $"Utilizador {detalhe.NomeUtilizador} já tem adesão ativa." });
+                    }
+                    else
+                    {
+                        pedidosValidos.Add(detalhe.PedidoId);
+                        utilizadoresValidos.Add(detalhe.UtilizadorId);
+                    }
+                }
+                    if (pedidosValidos.Any())
+                    {
+                        var linhasUtilizadores = await _context.Utilizadores.Where(u => utilizadoresValidos.Contains(u.Id)).ExecuteUpdateAsync(set => set.SetProperty(s => s.adesao, true));
+
+                        var linhasPedidos = await _context.Pedido.Where(p => pedidosValidos.Contains(p.Id)).ExecuteUpdateAsync(set => set.SetProperty(s => s.Status_Pedido, EnumStatusPedido.Aceite));
+
+                        if(linhasUtilizadores> 0 && linhasPedidos > 0)
+                        {
+                            foreach(var idValido in pedidosValidos)
+                            {
+                                resultados.Add(new { Id = idValido, Sucesso = true, Mensagem = "Pedido aceite com sucesso." });
+                            }
+                        }
+                    }
+                
+                resposta.Status = true;
+                resposta.Dados = resultados;
+                resposta.Mensagem = "Processamento Concluido. Verifique a lista de dados para detalhes";
             }
             catch (Exception ex)
             {
