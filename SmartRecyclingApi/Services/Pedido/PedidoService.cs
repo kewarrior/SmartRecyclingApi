@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartRecyclingApi.Data;
+using SmartRecyclingApi.Enums;
 using SmartRecyclingApi.Models;
 using SmartRecyclingApi.ViewModels;
 using SmartRecyclingApi.ViewModels.Pedido;
@@ -40,7 +41,7 @@ namespace SmartRecyclingApi.Services.Pedido
                 {
                     ref_Utilizador = pedidoDto.ref_Utilizador,
                     Tipo_Pedido = pedidoDto.Tipo_Pedido,
-                    Status_Pedido = pedidoDto.Status_Pedido,
+                    Status_Pedido = EnumStatusPedido.Pendente,
                     Data_Criacao = pedidoDto.Data_Criacao
                 };
 
@@ -97,7 +98,7 @@ namespace SmartRecyclingApi.Services.Pedido
             {
                 var pedidos = await (from p in _context.Pedido
                                      join u in _context.Utilizadores on p.ref_Utilizador equals u.Id
-                                     where p.Status_Pedido == "Pendente"
+                                     where p.Status_Pedido == EnumStatusPedido.Pendente 
                                      select new PedidoDTO
                                      {
                                          Id = p.Id,

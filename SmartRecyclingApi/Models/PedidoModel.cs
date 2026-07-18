@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using SmartRecyclingApi.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartRecyclingApi.Models
 {
@@ -7,7 +8,7 @@ namespace SmartRecyclingApi.Models
         public long Id { get; set; }
         public long ref_Utilizador { get; set; }
         public string? Tipo_Pedido { get; set; }
-        public string? Status_Pedido { get; set; }
+        public EnumStatusPedido Status_Pedido { get; set; }
         public DateTime? Data_Criacao { get; set; }
 
 
